@@ -1,0 +1,104 @@
+class TicTacToe:
+    field_size = 3
+    field_state = ["_"] * field_size ** 2
+    turn = 'X'
+    finished = False
+    def __init__(self, input_state):
+        self.field_state = [ch for ch in input_state]
+
+    def print_field(self):
+        print("-" * self.field_size ** 2)
+        for y in range(self.field_size):
+            print("|", end="")
+            for x in range(self.field_size):
+                print(f" {self.field_state[x + y * self.field_size]}", end="")
+            print(" |")
+        print("-" * self.field_size ** 2)
+
+    def check_line(self, x, y):
+        num_horizontal = 0
+        num_vertical = 0
+        num_diagonal = 1
+        if x == y:
+            num_diagonal = 0
+            for n_test in range(self.field_size):
+                if(self.field_state[n_test + n_test * self.field_size] != self.field_state[x + y * self.field_size]):
+                    num_diagonal += 1
+        elif x == self.field_size - y - 1:
+            num_diagonal = 0
+            for n_test in range(self.field_size):
+                if(self.field_state[n_test + (self.field_size - n_test - 1) * self.field_size] != self.field_state[x + y * self.field_size]):
+                    num_diagonal += 1
+        for x_test in range(self.field_size):
+            if(self.field_state[x_test + y * self.field_size] != self.field_state[x + y * self.field_size]):
+                num_horizontal += 1
+        for y_test in range(self.field_size):
+            if(self.field_state[x + y_test * self.field_size] != self.field_state[x + y * self.field_size]):
+                num_vertical += 1
+        if num_vertical == 0 or num_horizontal == 0 or num_diagonal == 0:
+            return True
+        else:
+            return False
+
+
+    def check_field(self):
+        x_win = 0
+        o_win = 0
+        num_empty = 0
+        num_x = 0
+        num_o = 0
+        for y in range(self.field_size):
+            for x in range(self.field_size):
+                if self.field_state[x + y * self.field_size].upper() == 'X':
+                    num_x += 1
+                    if self.check_line(x, y):
+                        x_win += 1
+                elif self.field_state[x + y * self.field_size].upper() == 'O':
+                    num_o += 1
+                    if self.check_line(x, y):
+                        o_win += 1
+                elif self.field_state[x + y * self.field_size] in '_ ':
+                    num_empty += 1
+                else:
+                    print("Unknown symbol in a field!")
+        if (o_win > 0 and x_win > 0) or abs(num_o - num_x) > 1:
+            print("Impossible")
+        elif o_win > 0:
+            self.finished = True
+            print("O wins")
+        elif x_win > 0:
+            self.finished = True
+            print("X wins")
+        elif num_empty > 0:
+            pass
+            #return "Game not finished"
+        else:
+            self.finished = True
+            print("Draw")
+
+    def place_mark(self):
+        numbers = '0123456789'
+        x_user, y_user = input('Enter the coordinates:').split()
+        if x_user in numbers and y_user in numbers:
+            x = int(x_user) - 1
+            y = self.field_size - int(y_user)
+            if int(x_user) > self.field_size or int(y_user) > self.field_size:
+                print(f"Coordinates should be from 1 to {self.field_size}!")
+            elif self.field_state[x + y * self.field_size] in '_ ':
+                self.field_state[x + y * self.field_size] = self.turn
+                self.turn = 'X' if self.turn == 'O' else 'O'
+                self.print_field()
+                return True
+            elif self.field_state[x + y * self.field_size].upper() in 'XO':
+                print("This cell is occupied! Choose another one!")
+        else:
+            print("You should enter numbers!")
+        return False
+
+
+tictactoe = TicTacToe("         ")
+tictactoe.print_field()
+
+while not tictactoe.finished:
+    tictactoe.place_mark()
+    tictactoe.check_field()
