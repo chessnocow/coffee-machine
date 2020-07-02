@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>News</title>
+</head>
+<body>
+<h2>Hyper news</h2>
+    <form action="/news/" method="get">{% csrf_token %}
+        <br>
+        <input name="q" type="text" placeholder="Search" size="24">
+        <input type="submit" value="Find">
+    </form>
+{% regroup news by created as news_by_date %}
+{% for date_cur in news_by_date %}
+    <h4>{{ date_cur.grouper }}</h4>
+    <ul>
+        {% for item in date_cur.list %}
+            <li><a target="_blank" href="/news/{{ item.link }}/">{{ item.title }}</a></li>
+        {% endfor %}
+    </ul>
+{% endfor %}
+<a target="_blank" href="/news/create/">Create news</a>
+</body>
+</html>
